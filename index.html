@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para Gaby</title>
+<meta name="description" content="Una carta.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2a2220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='4' fill='%23f3ead6'/%3E%3Cpath d='M10 6h8v52h-8z' fill='%23b5553f'/%3E%3Cpath d='M24 22h22M24 30h22M24 38h16' stroke='%23566a8f' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --desk:#2a2220;
+    --paper:#f5eedb;
+    --paper-2:#efe6cf;
+    --rule:rgba(86,106,143,.32);
+    --margin:rgba(190,80,70,.55);
+    --ink:#22304a;
+    --ink-soft:#4a556b;
+    --pencil:#8a8577;
+    --cover:#b8553f;
+    --cover-dark:#8d3d2c;
+    --ring:#c9c3b3;
+    --lh:32px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--desk);
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(255,235,200,.10), transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(0,0,0,.45), transparent 60%);
+    color:var(--ink);
+    font-family:'Caveat', 'Patrick Hand', 'Segoe Print', cursive;
+    overflow:hidden;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  /* grain over the whole desk */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .stage{
+    position:fixed;inset:0;
+    display:grid;place-items:center;
+    padding:14px;
+    padding-top:max(14px, env(safe-area-inset-top));
+    padding-bottom:max(14px, env(safe-area-inset-bottom));
+  }
+  .book{
+    position:relative;
+    width:min(560px, 100%);
+    height:min(760px, 100%);
+    aspect-ratio:3/4;
+    perspective:2400px;
+  }
+  @media (max-width:640px){
+    .book{width:100%;height:100%;aspect-ratio:auto}
+  }
+
+  .page{
+    position:absolute;inset:0;
+    transform-origin:left center;
+    transform-style:preserve-3d;
+    transform:rotateY(0deg);
+    transition:transform .95s cubic-bezier(.45,.02,.2,1), visibility 0s 0s;
+    will-change:transform;
+  }
+  .page.flipped{
+    transform:rotateY(-178deg);
+    visibility:hidden;
+    transition:transform .95s cubic-bezier(.45,.02,.2,1), visibility 0s .95s;
+  }
+  .face{
+    position:absolute;inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    border-radius:4px 10px 10px 4px;
+    overflow:hidden;
+  }
+  .back{transform:rotateY(180deg);}
+
+  /* ---------- paper ---------- */
+  .paper{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(90deg, transparent 0 62px, var(--margin) 62px 63px, transparent 63px),
+      repeating-linear-gradient(to bottom, transparent 0 calc(var(--lh) - 1px), var(--rule) calc(var(--lh) - 1px) var(--lh));
+    background-attachment:local, local;
+    background-position:0 0, 0 26px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.35) inset,
+      0 18px 40px -18px rgba(0,0,0,.65),
+      0 2px 6px rgba(0,0,0,.25);
+  }
+  .paper::after{ /* paper fibre */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .9 0 0 0 0 .84 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)'/%3E%3C/svg%3E");
+  }
+  /* spiral holes down the left edge */
+  .paper::before{
+    content:"";position:absolute;left:14px;top:0;bottom:0;width:18px;pointer-events:none;z-index:2;
+    background:
+      radial-gradient(circle at 9px 50%, rgba(0,0,0,.55) 0 5px, rgba(0,0,0,.25) 5.5px, transparent 7px) 0 0/18px 56px repeat-y;
+    background-position:0 20px;
+  }
+  .back.paper{background-color:var(--paper-2)}
+
+  .content{
+    position:absolute;inset:0;
+    padding:26px 30px 44px 82px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+    font-size:22px;line-height:var(--lh);
+    color:var(--ink);
+    letter-spacing:.1px;
+  }
+  .content::-webkit-scrollbar{display:none}
+  .content p{margin:0 0 var(--lh)}
+  .content p:last-child{margin-bottom:0}
+  .content .caps{font-weight:600;letter-spacing:.5px}
+  .content .sig{
+    font-family:'Homemade Apple', 'Caveat', cursive;
+    font-size:20px;
+    margin-top:var(--lh);
+    text-align:right;
+    color:var(--ink);
+    transform:rotate(-3deg);
+    padding-right:18px;
+  }
+  @media (max-width:380px){
+    :root{--lh:30px}
+    .content{font-size:20px;padding-left:76px;padding-right:22px}
+  }
+  @media (min-width:641px){
+    :root{--lh:34px}
+    .content{font-size:24px}
+  }
+
+  .pagenum{
+    position:absolute;right:20px;bottom:12px;
+    font-size:16px;color:var(--pencil);letter-spacing:.5px;
+    pointer-events:none;
+  }
+  .hint{
+    position:absolute;left:0;right:0;bottom:12px;text-align:center;
+    font-size:16px;color:var(--pencil);pointer-events:none;
+    animation:hint 2.6s ease-in-out infinite;
+  }
+  @keyframes hint{0%,100%{opacity:.35}50%{opacity:.9}}
+
+  /* ---------- cover ---------- */
+  .cover{
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.10), transparent 55%),
+      linear-gradient(160deg, var(--cover), var(--cover-dark));
+    box-shadow:
+      0 24px 50px -20px rgba(0,0,0,.8),
+      0 3px 8px rgba(0,0,0,.35),
+      inset 0 0 0 1px rgba(255,255,255,.08);
+    display:grid;place-items:center;
+    cursor:pointer;
+  }
+  .cover::after{ /* leather-ish grain */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.45;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .6 0 0 0 0 .35 0 0 0 0 .3 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23c)'/%3E%3C/svg%3E");
+  }
+  .cover::before{ /* spine band */
+    content:"";position:absolute;left:0;top:0;bottom:0;width:26px;
+    background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.05) 70%, rgba(255,255,255,.06));
+  }
+  .label{
+    position:relative;z-index:1;
+    background:var(--paper);
+    padding:22px 34px 26px;
+    min-width:min(70%, 300px);
+    text-align:center;
+    transform:rotate(-2deg);
+    box-shadow:0 6px 14px -6px rgba(0,0,0,.6);
+    color:var(--ink);
+    background-image:repeating-linear-gradient(to bottom, transparent 0 27px, var(--rule) 27px 28px);
+    background-position:0 14px;
+  }
+  .label::before,.label::after{ /* tape */
+    content:"";position:absolute;width:74px;height:22px;background:rgba(255,246,200,.55);
+    box-shadow:0 1px 2px rgba(0,0,0,.15);
+  }
+  .label::before{left:-18px;top:-10px;transform:rotate(-8deg)}
+  .label::after{right:-18px;bottom:-10px;transform:rotate(-6deg)}
+  .label .to{font-size:20px;color:var(--ink-soft);line-height:28px}
+  .label .name{font-family:'Homemade Apple','Caveat',cursive;font-size:34px;line-height:56px;}
+  .label .open{font-size:17px;color:var(--pencil);margin-top:6px;line-height:28px;animation:hint 2.6s ease-in-out infinite}
+
+  /* ---------- controls ---------- */
+  .ctl{
+    position:fixed;z-index:50;
+    top:max(10px, env(safe-area-inset-top));
+    right:12px;
+    width:44px;height:44px;border-radius:50%;
+    border:0;background:rgba(34,48,74,.55);
+    color:#f3ead6;font:20px/1 'Caveat',cursive;
+    cursor:pointer;display:grid;place-items:center;
+    backdrop-filter:blur(4px);
+    opacity:0;pointer-events:none;transition:opacity .4s;
+  }
+  .ctl.show{opacity:.85;pointer-events:auto}
+  .ctl:hover{opacity:1}
+  .ctl svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .ctl .off{display:none}
+  .ctl.muted .on{display:none}
+  .ctl.muted .off{display:block}
+
+  .nav{
+    position:fixed;z-index:40;top:50%;transform:translateY(-50%);
+    width:52px;height:52px;border-radius:50%;border:0;
+    background:rgba(245,238,219,.06);color:#e9dfc8;
+    font:30px/1 'Caveat',cursive;cursor:pointer;
+    opacity:0;pointer-events:none;transition:opacity .4s, background .2s;
+  }
+  .nav.show{opacity:.7;pointer-events:auto}
+  .nav:hover{opacity:1;background:rgba(245,238,219,.14)}
+  .nav.prev{left:calc(50% - min(280px, 50%) - 70px)}
+  .nav.next{right:calc(50% - min(280px, 50%) - 70px)}
+  @media (max-width:760px){.nav{display:none}}
+
+  .restart{
+    display:inline-block;margin-top:var(--lh);
+    font-size:18px;color:var(--pencil);text-decoration:underline dotted;
+    cursor:pointer;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .page,.page.flipped{transition:transform .2s, visibility 0s .2s}
+    .hint,.label .open{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<audio id="music" src="musica.mp3" loop preload="auto"></audio>
+
+<button class="ctl" id="mute" aria-label="Silenciar música" title="Música">
+  <svg class="on" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <svg class="off" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M3 3l18 18"/></svg>
+</button>
+<button class="nav prev" id="prev" aria-label="Página anterior">‹</button>
+<button class="nav next" id="next" aria-label="Página siguiente">›</button>
+
+<div class="stage">
+  <div class="book" id="book">
+
+    <!-- 0 · portada -->
+    <section class="page" data-cover>
+      <div class="face cover">
+        <div class="label">
+          <div class="to">para</div>
+          <div class="name">Gaby</div>
+          <div class="open">toca para abrir</div>
+        </div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 1 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>¿Qué tal, Gaby? Sabes que estuve pensando todo el día en responder o no tu mensaje y la verdad prefiero serte sincero. Hoy, por unos instantes, pensaba en dejarlo todo así como está y no volver a decirte nada nunca más.</p>
+          <p>Y pensé en eso porque creo que después de todo lo que pasó entre ambos las cosas nunca pudieron volver a la “normalidad” por más que lo intenté. Y es que cuando nos hemos visto este último tiempo hemos tenido conversaciones que creo fueron buenas y cercanas, pero después, cuando hablamos por mensaje, parece que solo respondes por educación y con un completo falso interés.</p>
+        </div>
+        <div class="hint">toca para pasar la página →</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Yo sé que ha pasado <span class="caps">UN MONTÓN</span> de tiempo desde todo lo que nos pasó, pero de alguna forma dejaste en mí ciertas cosas que sigo arrastrando hoy. Y todo esto que te voy a decir lo digo desde el lugar más lindo y ordenado que tengo adentro de mí. Quizás ahorita estés pensando cosas como “no puede ser que este tipo siga enganchado después de todo este tiempo” y déjame decirte que en parte sí…</p>
+          <p>Yo sé que este mensaje es demasiado random para que te caiga la tarde de un viernes lindo y soleado, pero simplemente ya no puedo tener más todo esto conmigo.</p>
+        </div>
+        <div class="pagenum">2</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Pude tranquilamente haber escrito esto en un papel y haberlo quemado, en notas y haberlo tenido en mi teléfono durante años hasta que un día cualquiera lo hubiera encontrado, pero que ya no significara nada para mí. Pude haberle dicho esto a un psicólogo y ni siquiera haberte dirigido la palabra o la mirada después del diciembre pasado. Pero si algo soy es una persona que da el 100% a todo lo que hace y quiere, porque después de haber perdido muchísimas veces en mi vida, entendí que lo único que me queda es no quedarme con las ganas de lo que me hace bien. Y tú me haces bien. O me hacías bien.</p>
+        </div>
+        <div class="pagenum">3</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Contigo aprendí cosas maravillosas, pude mostrarte un lado de mí que ni yo sabía que tenía y visualicé todo lo que un día pude haber llegado a ser si tenía algo serio junto a ti. Y en todo eso me haces bien. Y sí, yo sé… “pero ni siquiera nos conocimos”, “pero si solo fue un mes”, “pero ya pasó mucho tiempo, ¿por qué no lo deja ya?”. Yo sé que todas esas cosas se nos pueden venir a la mente cuando te digo eso, y ahí es donde encuentro el único problema de todo.</p>
+        </div>
+        <div class="pagenum">4</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Sinceramente creo que nunca hubo ningún tipo de interés de ti hacia mí. Solo estabas llenando un vacío que tenías hasta que otra persona regrese y tome lo que es o era suyo, porque tú también lo estabas esperando inconscientemente. Y en sí todo eso es mi culpa, porque de alguna forma me lo advertiste. Pero ¿cómo no me podía gustar tu sonrisa? ¿Cómo no me podía gustar la forma en la que hablabas? ¿Cómo no me podía gustar la forma en la que me mirabas cuando te decía algún chiste? ¿Cómo no me podía gustar cómo bailabas o tocabas el piano? ¿Cómo no me podías gustar si todo lo que me mostrabas era hermoso?</p>
+        </div>
+        <div class="pagenum">5</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Mira, he hecho mi vida sin problema, he seguido compilando cosas positivas a nivel profesional y personal y he conocido a más personas, pero a veces me sigues pasando por la mente y ahí entra esta dualidad que tengo. ¿Por qué tengo que esperar a alguien que ni siquiera sintió nada por mí? ¿Por qué simplemente no cosecho todo lo lindo que aprendí contigo y se lo doy a la siguiente persona, si es que me llega una siguiente persona?</p>
+        </div>
+        <div class="pagenum">6</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>He estado meses con ese debate y, después de todos los intentos que he hecho y de todo lo que me has expresado en nuestros últimos encuentros, creo que ya tengo una respuesta. Creo que simplemente debo dejarte ir por completo y no hacerle caso a esa parte de mí que se aferra a tu mensaje de que aún no estabas lista, pero que te dé tiempo.</p>
+          <p>No sé si debo disculparme por decirte todo esto. No creo. No quiero. Me hubiera encantado darte mi 100%, pero ya no puedo seguirte dando tanto espacio adentro mío.</p>
+        </div>
+        <div class="pagenum">7</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 8 -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Eres la chica más maravillosa que he conocido. Eres salida de un cuento, Gaby. Y yo sé que solo te “conocí” un mes. Lo digo entre comillas porque creo que ni te conocí, pero con lo que vi me bastó para escribirte todo esto. Y no sé si te idealicé mucho, como todos esos videos de TikTok dicen antes de que acabes escribiendo un texto como este, pero no me interesa.</p>
+        </div>
+        <div class="pagenum">8</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+    <!-- 9 · final -->
+    <section class="page">
+      <div class="face paper">
+        <div class="content">
+          <p>Sin más que decirte, espero que puedas seguir cumpliendo todas esas cosas bonitas que quieres. Espero que sigas bailando y que seas muy feliz, Gaby.</p>
+          <p>Bye.</p>
+          <div class="sig">Fabb</div>
+          <span class="restart" id="restart">↻ volver al inicio</span>
+        </div>
+        <div class="pagenum">9</div>
+      </div>
+      <div class="face back paper"></div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const pages = Array.from(document.querySelectorAll('.page'));
+  const N = pages.length;
+  const music = document.getElementById('music');
+  const muteBtn = document.getElementById('mute');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  let cur = 0;          // index of the page currently on top
+  let animating = false;
+  let muted = false;
+
+  function layer(){
+    pages.forEach((p,i)=>{
+      // unflipped pages: current on top; flipped: later ones on top
+      p.style.zIndex = i < cur ? i : (N - i);
+    });
+  }
+  function render(){
+    pages.forEach((p,i)=> p.classList.toggle('flipped', i < cur));
+    layer();
+    const opened = cur > 0;
+    muteBtn.classList.toggle('show', opened);
+    prevBtn.classList.toggle('show', opened);
+    nextBtn.classList.toggle('show', opened && cur < N-1);
+  }
+  function lock(){ animating = true; setTimeout(()=>{ animating=false; }, 700); }
+
+  function startMusic(){
+    if (!music.src) return;
+    music.volume = 0.85;
+    const p = music.play();
+    if (p && p.catch) p.catch(()=>{ /* file missing or blocked: stay quiet */ });
+  }
+
+  function next(){
+    if (animating || cur >= N-1) return;
+    if (cur === 0) startMusic();
+    cur++; lock(); render();
+  }
+  function prev(){
+    if (animating || cur <= 0) return;
+    cur--; lock(); render();
+  }
+
+  // click: cover opens; on pages, right side → next, left side → prev
+  document.querySelector('.stage').addEventListener('click', (e)=>{
+    if (e.target.closest('#restart')) return;
+    if (cur === 0) { next(); return; }
+    const rect = document.getElementById('book').getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    if (x < 0.32) prev(); else next();
+  });
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  // keyboard
+  window.addEventListener('keydown', (e)=>{
+    if (['ArrowRight','ArrowDown',' ','Enter','PageDown'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+  });
+
+  // swipe
+  let sx=0, sy=0, st=0;
+  window.addEventListener('pointerdown', (e)=>{ sx=e.clientX; sy=e.clientY; st=Date.now(); }, {passive:true});
+  window.addEventListener('pointerup', (e)=>{
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if (Date.now()-st > 800) return;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)*1.3){
+      if (dx < 0) next(); else prev();
+      swiped = true; setTimeout(()=>swiped=false, 350);
+    }
+  }, {passive:true});
+  let swiped=false;
+  // avoid a swipe also counting as a tap
+  document.querySelector('.stage').addEventListener('click', (e)=>{ if (swiped){ e.stopImmediatePropagation(); } }, true);
+
+  // mute toggle
+  muteBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    muted = !muted;
+    music.muted = muted;
+    muteBtn.classList.toggle('muted', muted);
+    muteBtn.setAttribute('aria-label', muted ? 'Activar música' : 'Silenciar música');
+    if (!muted && music.paused) startMusic();
+  });
+
+  document.getElementById('restart').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    cur = 0; lock(); render();
+    music.pause(); music.currentTime = 0;
+  });
+
+  // if the tab is hidden, keep playing (letter is being read); on return, nudge playback
+  document.addEventListener('visibilitychange', ()=>{
+    if (!document.hidden && cur>0 && !muted && music.paused) startMusic();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
